@@ -36,3 +36,7 @@
 ## 0.3.1 (2026-11-14) - report rewrite
 - Report rewritten in simple first-person English, no tables, plain ASCII text (`docs/REPORT.md`).
 - `docs/build_report_docx.py` builds `docs/SepsisWatch_Report.docx` (page break before each section, 12 figures); uploaded to Google Drive as a Google Doc.
+
+## 0.4.1 (2026-11-14) - report layout
+- Shorter report (about 11 pages instead of about 20): no forced page breaks, Arial 10.5 pt, bigger headings (22 pt / 14 pt),
+  23 subheadings, figures scaled per figure (`docs/build_report_docx.py`).

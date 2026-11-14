@@ -22,11 +22,19 @@ Sepsis is a very dangerous condition. It starts with an infection. The body reac
 
 The treatment is antibiotics, fluids and support for the organs. It works better when it starts early. In my first report I wrote that every hour of delay raises the risk of death by about 8%. I did not check this number again, but everybody agrees that earlier treatment is better.
 
+## What doctors look at
+
 Doctors in the ICU watch two kinds of data. The first kind is vital signs, which are measured all the time. These are heart rate, breathing rate, temperature, blood pressure and the oxygen in the blood. The second kind is blood tests, which are done only a few times per day. Examples are lactate, white blood cells, creatinine, bilirubin and platelets. High lactate means that the body does not get enough oxygen.
+
+## The SIRS rule
 
 There is also a simple rule called SIRS. It counts four warning signs: heart rate above 90, breathing rate above 20, temperature above 38 or below 36 degrees, and abnormal white blood cells. If the patient has two or more signs, the doctor can suspect sepsis. I use this rule later to compare it with my model.
 
+## Why it is hard for a computer
+
 This problem is hard for a computer for three reasons. Other illnesses can look the same, so there are many false alarms. Blood tests are rare, so most data is missing. And if a system gives too many alarms, the nurses start to ignore it.
+
+## The goal
 
 The goal of my project is simple. Every hour I want to give each patient a risk score for sepsis in the next 6 hours. Then the staff could look first at the patients with the highest score.
 
@@ -34,7 +42,11 @@ The goal of my project is simple. Every hour I want to give each patient a risk 
 
 I used the public data from the PhysioNet Challenge 2019. There is one row for each hour that a patient spent in the ICU.
 
+## Size of the data
+
 The data has 40,336 patients and 1,552,210 rows. There are 43 columns. They contain vital signs, lab tests, age, gender, the hospital unit, the hours in the ICU and the sepsis label. In total 2,932 patients got sepsis, which is 7.3%. Only 1.8% of all hours are marked as sepsis. The median stay is 38 hours. The median hour when sepsis starts is hour 29.
+
+## Three things I found
 
 I found three important things in the data.
 
@@ -68,6 +80,8 @@ One more thing about the label. In this dataset the sepsis label starts 6 hours 
 
 My first version used a Random Forest with only 7 inputs. In the report I wrote that it finds 93% of the sepsis cases. When I looked at the code again, I found five mistakes. All of them make the model look better than it really is.
 
+## The five mistakes
+
 Mistake 1. I filled the missing values and shifted the values over the whole table. Because of this, values and labels of one patient went into the rows of the next patient. The fix is to do every step inside one patient.
 
 Mistake 2. I split the rows randomly into train and test. The same patient was in both parts, so the model could recognise the patient. The fix is to split by patient.
@@ -79,6 +93,8 @@ Mistake 4. My target also counted the hours when the patient already had sepsis.
 Mistake 5. I chose the alarm threshold on the test data. This makes the test result too good. The fix is to choose it on a separate validation part.
 
 The first report also had some notes left in the text, it had no figures, and it said that the heart rate trend was important even though I never tested it.
+
+## The replica test
 
 After this I did a replica test. I ran the old code again, without any change, on the same data. The old numbers did not come back. The first report said the recall was about 72% at threshold 0.50 and about 93% at the best cut-off. In the replica with a random split I got an AUROC of 0.723, a recall of 8.9% at 0.50 and 54.7% at the best cut-off, and a precision of 4.3%. With a split by patient I got an AUROC of 0.600, a recall of 2.3% at 0.50 and 53.0% at the best cut-off, and a precision of 2.4%.
 
@@ -110,6 +126,8 @@ Step 8. I wrote automatic tests so I can trust the code. There are 13 tests. The
 
 I tried four models on the same folds and the same 6 hour target. For all of them I use the AUROC score. It tells how often the model gives a higher risk to a sepsis hour than to a normal hour. A score of 0.5 is guessing and 1.0 is perfect.
 
+## The four models
+
 The first model is the SIRS rule. It has an AUROC of 0.626 and a timing score of 0.52. It catches 47.5% of the sepsis hours and gives an alarm in 28.7% of the normal hours.
 
 The second model is logistic regression. This is a simple model that adds up the inputs with weights. It has an AUROC of 0.725 and a timing score of 0.52. It catches 81.2% of the sepsis hours and gives an alarm in 54.1% of the normal hours.
@@ -122,7 +140,11 @@ The fourth model is LightGBM with the trend inputs. This is my final model. It h
 
 Fig 12. On the left, LightGBM is the best at finding risky patients. On the right, all four models are close to 0.5 for timing.
 
+## What I learned from this
+
 What I understand from this: LightGBM is much better than the rule and the simple model at finding risky patients. I chose it because it works with missing values, it is fast on 1.5 million rows and it is usually strong on tables of numbers. The trend inputs added only 0.004 to the score, which is almost nothing. All four models have a timing score near 0.5, so a more complex model did not help here. The SIRS rule gives fewer alarms, but only because I did not tune it to catch 80%. So the alarm numbers are not a fair comparison, but the AUROC is.
+
+## Other time horizons
 
 I also tried other time horizons. The AUROC is almost the same for 3 hours (0.804), 6 hours (0.801) and 12 hours (0.796). The other score, AUPRC, goes up with the horizon, but only because sepsis hours are more common in the target (0.4%, 0.9% and 1.7%). So I cannot compare it between horizons.
 
@@ -134,7 +156,11 @@ Fig 10. The AUROC is flat. The AUPRC follows how common the target is.
 
 The final model is LightGBM with a 6 hour target. It finds risky patients well, but it makes many alarms. When it catches 80% of the sepsis hours, only 1.9% of its alarms are correct.
 
+## The numbers
+
 These are the numbers. The AUROC is 0.801, plus or minus 0.003 between the folds. When I put all folds together and use bootstrap, the 95% range is 0.785 to 0.801. The recall is 80.5%. The precision is 1.9%, and the base rate is 0.87%. In 36.1% of the normal hours the model gives an alarm. For the sepsis patients, 86.8% get an alarm in the 6 hour window. But also 59.1% of the patients without sepsis get at least one alarm. There are 32.1 alarms per 100 normal patient hours. The timing score is 0.509. The Brier score is 0.0085, and for a model with no skill it is 0.0087.
+
+## Curves and calibration
 
 Fig 6 shows two curves. The left one is the ROC curve and it looks good. The right one is the precision and recall curve and it shows the real problem. The precision stays very low because sepsis is rare.
 
@@ -148,6 +174,8 @@ I also checked if the risk numbers are correct. They are more or less correct. W
 
 Fig 13. When the dots are near the dashed line, the risk numbers are about right.
 
+## The most important inputs
+
 Then I looked at which inputs are the most important. The top ones are: how long ago the oxygen setting (FiO2) was recorded, lactate, the 6 hour average of the breathing rate, FiO2, phosphate, how long ago lactate was measured, and the 6 hour average of the heart rate. Three inputs from the top 15 are counters of the hours since the last measurement. I think this shows what the doctors decided to test, and this depends on how worried they were. So it is not only the signals from the body. I did not test this idea, and the model may not work in another hospital.
 
 ![Fig 8a: SHAP summary of the top 15 inputs](figures/fig8a_shap_summary.png)
@@ -157,6 +185,8 @@ Fig 8a. Every dot is one hour. A dot on the right pushed the risk up. Red is a h
 # 8. Problems and what I did
 
 Most of my time went into finding problems. Here I write each one, also the ones I could not solve.
+
+## List of problems
 
 Problem 1. I could not repeat the old numbers. The old code gave a recall of 9% at 0.50 and 55% at the best cut-off, and not 72% and 93%. I ran the old code again on the same data and I wrote the result in the report. I do not know the reason.
 
@@ -176,6 +206,8 @@ Problem 8. There are too many false alarms. The precision is only 1.9%. I did no
 
 Problem 9. I could not test Docker, because it is not installed on this computer. I wrote the Docker file but I never ran it.
 
+## The biggest problem: timing
+
 The biggest problem is that the model does not know when. Fig 7 shows, for sepsis patients, how often the model gives an alarm in each hour before sepsis starts. It is about 80% in every hour, from 48 hours before to 1 hour before. For patients without sepsis it is about 32%. So the model can separate the patients, but its alarm does not get stronger when sepsis comes closer.
 
 ![Fig 7: alarm rate and hours before the start of sepsis](figures/fig7_detection_curve.png)
@@ -189,6 +221,8 @@ Fig 9 shows one typical patient. I took the median case and not the best one. Th
 Fig 9. A typical sepsis patient. The risk at the bottom stays flat before the start of sepsis, which is the red dotted line.
 
 I measured this with the timing score. It is 0.51 for the final model and between 0.50 and 0.52 for all other models.
+
+## Study of the timing problem
 
 After this I did a separate study to find out why the timing does not work. I tried five ideas and I measured each one with the same timing score.
 
@@ -212,9 +246,15 @@ My conclusion is that with these inputs there is almost no signal that shows whe
 
 I made a small web service (API) and a script that watches if the data changes. This is a prototype for learning.
 
+## The API
+
 The API works like this. You send the hourly history of one patient. It returns a risk score, an alarm with yes or no, and the threshold that it used. It refuses wrong input, for example an impossible age, an unknown variable name or the same hour two times. It makes the inputs with the same code as the training, and I wrote a test that checks that the results are the same. Every request is saved in a log file so I can use it for monitoring.
 
+## Monitoring
+
 For monitoring, I use a script that compares the logged inputs with the training data. It uses the Population Stability Index, or PSI. Below 0.10 the data is stable, between 0.10 and 0.25 there is some change, and above 0.25 there is a big change. I tested it with normal data and with shifted data. It stays quiet for normal data and gives a warning for shifted data.
+
+## What is done and what is not
 
 What is done: the 13 automatic tests pass. The API was tested in code with sample patients. The drift script was tested on simulated data. The code is saved in a local Git repository.
 
@@ -224,8 +264,14 @@ What is not done: I wrote the Docker file but I never built it, because Docker i
 
 The project now gives honest results, but the model is not an early warning system yet. It can rank the patients by risk, with an AUROC of 0.80. But it cannot say when sepsis will start, because the timing score is 0.51, and it gives too many false alarms.
 
+## The first report against reality
+
 I also want to compare what my first report said with what I found now. The first report said the recall rose from about 72% to about 93%. I could not repeat this, because the old code gave 9% and 55%. The first report said the model predicts sepsis 6 hours ahead. This is not true, because the model cannot tell when sepsis starts. The first report said the heart rate trend was a critical input. I never tested it then. Now the 6 hour average of the heart rate is in the top 10, but the lab and oxygen inputs are stronger. The first report said recall means lives saved. This is wrong, because recall is only the share of the sepsis hours that the model catches. The first report said sepsis is under 5% of the data. In the data it is 7.3% of the patients and 1.8% of the hours.
 
+## Next steps
+
 What I want to do next. First, I want to try a model that reads the whole sequence of one patient, for example an LSTM, because the five ideas that I tried did not fix the timing. Second, I want to reduce the false alarms, for example by giving an alarm only when the risk keeps going up. Third, I want to build and test the Docker image and run the Colab notebook. Fourth, I want to add a small demo page and a regular drift report.
+
+## For my CV
 
 For my CV I can write this. I built an end to end machine learning pipeline for the risk of sepsis in ICU patients, with 40,000 patients and 1.5 million hours, using LightGBM. It was better than the SIRS rule and logistic regression, with an AUROC of 0.80 against 0.63 and 0.73. I found and fixed data leakage in my earlier version with patient based validation, automatic tests and ablation tests, and I reported that the model ranks patients but does not find the time of the start (timing AUROC 0.51). I also added a tested FastAPI service and PSI drift monitoring.

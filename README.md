@@ -7,7 +7,7 @@ Predict, hour by hour, whether an ICU patient will develop sepsis in the next 6 
 not tell *when* sepsis starts (timing AUROC 0.51, no better than a SIRS rule or logistic regression on that point).
 See [MODEL_CARD.md](MODEL_CARD.md). The first report's recall numbers (72% → 93%) did not reproduce.
 
-Full report (simple English, one section per page): https://docs.google.com/document/d/1SgLCopo9o1afc9v5Uht0-Q1fvGAk1SGycOkL__ZfqWE/edit  (source text: docs/REPORT.md, build with docs/build_report_docx.py)
+Full report (simple English, one section per page): https://docs.google.com/document/d/1f6NR-cWK-QR78c-DTjYeqtHF0Q783H-UsZfOS74_fAo/edit  (source text: docs/REPORT.md, build with docs/build_report_docx.py)
 
 ## Layout
 ```
