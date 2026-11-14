@@ -16,7 +16,7 @@ Full report (simple English, one section per page): https://docs.google.com/docu
 src/sepsis/    config  features  train  baselines  final  metrics  analysis  eda  replica  monitoring  timing  onset
 api/           app.py               FastAPI service (POST /predict, GET /health)
 models/        lgbm_final.txt, model_meta.json, reference_stats.json (created by sepsis.final)
-tests/         leakage + API + monitoring tests (13)
+tests/         leakage, API, monitoring, timing and onset tests (21)
 notebooks/     Sepsis_Colab.ipynb   (Google Colab, results cached in Drive)
 docs/          PYTHON_GUIDE.md      (Serbian: Python/ML knowledge for projects like this)
 data/raw/      Dataset.csv          (not in git)

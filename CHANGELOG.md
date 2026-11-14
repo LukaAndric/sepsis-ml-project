@@ -5,6 +5,7 @@
   three targets (6-12 h before, 0-6 h before, detection) and an alarm on a rise of risk (fig16).
 - Result: no signal 6-12 h before (timing 0.50), weak 0-6 h before (0.54-0.56), detection works (0.67, AUROC 0.87).
 - Report section 11 added (simple English); Google Doc updated.
+- 8 new tests for the timing and onset studies (causal features, SOFA cut-offs, metric windows): 21 tests total.
 
 ## 0.4.0 (2026-11-14) - timing study
 - Added `sepsis.timing`: within-patient univariate check and 5 experiments on why the model cannot tell WHEN sepsis starts.

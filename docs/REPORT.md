@@ -120,7 +120,7 @@ Step 6. I choose the alarm threshold on validation data. In each training part I
 
 Step 7. I measure the results in a few ways. I look at hourly scores and at patient scores. I also made a timing score. I take only the patients with sepsis and I ask if the model can tell the last 6 hours before the start from the hours 7 to 48 before the start. If the score is 0.5, it cannot.
 
-Step 8. I wrote automatic tests so I can trust the code. There are 13 tests. They check that nothing is filled across patients, that the trend inputs never look into the future, that the targets are only before the start of sepsis, that the shortcut columns are not used, and that the web service makes the same inputs as the training code.
+Step 8. I wrote automatic tests so I can trust the code. There are 21 tests. They check that nothing is filled across patients, that the trend inputs never look into the future, that the targets are only before the start of sepsis, that the shortcut columns are not used, and that the web service makes the same inputs as the training code. Some tests also check the timing and onset studies, for example that the SOFA points follow the normal cut-offs.
 
 # 6. The models I tried
 
@@ -256,9 +256,9 @@ For monitoring, I use a script that compares the logged inputs with the training
 
 ## What is done and what is not
 
-What is done: the 13 automatic tests pass. The API was tested in code with sample patients. The drift script was tested on simulated data. The code is saved in a local Git repository.
+What is done: the 21 automatic tests pass, also on GitHub after every change. The API was tested in code with sample patients. The drift script was tested on simulated data. The code is on GitHub.
 
-What is not done: I wrote the Docker file but I never built it, because Docker is not installed on this computer. I did not run the Google Colab notebook yet. There is no real traffic, no plan for regular drift reports and no plan for retraining. The code is not on GitHub yet. There was no clinical testing of any kind.
+What is not done: I wrote the Docker file but I never built it, because Docker is not installed on this computer. I did not run the Google Colab notebook yet. There is no real traffic, no plan for regular drift reports and no plan for retraining. There was no clinical testing of any kind.
 
 # 10. Conclusion
 
