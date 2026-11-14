@@ -40,7 +40,9 @@ Benchmark-style task (label of the current hour): AUROC 0.821 ± 0.005, AUPRC 0.
 ## Known limitations (read before using any number)
 1. **No temporal localization:** timing AUROC ≈ 0.51 — the alarm rate for septic patients is ~80% at every hour from
    48 h to 1 h before onset. The model ranks *patients*, not *time to onset*; it is not yet a true early-warning signal.
-   Trend features did not fix this (+0.004 AUROC only).
+   Trend features did not fix this (+0.004 AUROC only). Five further attempts (vitals only, extra dynamics, training on septic
+   patients only, benchmark target; `python -m sepsis.timing`) reached 0.51-0.56 at best (`figures/fig14_timing_attempts.png`).
+   Within-patient, vital signs hardly change in the 48 h before onset (univariate AUC 0.43-0.56).
 2. **Alarm burden is unusable clinically:** 59% of non-septic patients would trigger an alarm; precision 1.9%.
 3. **Calibration is acceptable but skill is low:** deciles follow the diagonal (Fig 13), but Brier is only 1.6% better than no skill.
 4. **Clinician-behaviour features:** top SHAP features include `FiO2_hrs_since`, Lactate and other `*_hrs_since` features

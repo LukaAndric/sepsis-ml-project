@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.0 (2026-11-14) - timing study
+- Added `sepsis.timing`: within-patient univariate check and 5 experiments on why the model cannot tell WHEN sepsis starts.
+- Result: timing AUROC 0.51-0.56 for every variant (best: trained on septic patients only, 0.554). New figure 14.
+- Report section 8 and 10 updated; next idea is a sequence model (not tried).
+
 ## 0.3.0 (2026-11-14) - baselines, trends, serving, monitoring
 - Added 18 trend features (6h mean/std/change of 6 vitals): AUROC +0.004 only; timing AUROC unchanged (~0.51).
 - Added baselines on the same folds: SIRS rule (AUROC 0.626) and logistic regression (0.725); LightGBM 0.801.

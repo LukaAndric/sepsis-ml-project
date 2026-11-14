@@ -7,11 +7,11 @@ Predict, hour by hour, whether an ICU patient will develop sepsis in the next 6 
 not tell *when* sepsis starts (timing AUROC 0.51, no better than a SIRS rule or logistic regression on that point).
 See [MODEL_CARD.md](MODEL_CARD.md). The first report's recall numbers (72% → 93%) did not reproduce.
 
-Full report (simple English, one section per page): https://docs.google.com/document/d/1UfgvuClc3IEgCaQb67EK9KwmroMTjSFR25tdUv8Rvvc/edit  (source text: docs/REPORT.md, build with docs/build_report_docx.py)
+Full report (simple English, one section per page): https://docs.google.com/document/d/1SgLCopo9o1afc9v5Uht0-Q1fvGAk1SGycOkL__ZfqWE/edit  (source text: docs/REPORT.md, build with docs/build_report_docx.py)
 
 ## Layout
 ```
-src/sepsis/    config  features  train  baselines  final  metrics  analysis  eda  replica  monitoring
+src/sepsis/    config  features  train  baselines  final  metrics  analysis  eda  replica  monitoring  timing
 api/           app.py               FastAPI service (POST /predict, GET /health)
 models/        lgbm_final.txt, model_meta.json, reference_stats.json (created by sepsis.final)
 tests/         leakage + API + monitoring tests (13)
@@ -34,6 +34,7 @@ python -m sepsis.train             # 3. CV (first run builds the feature cache; 
 python -m sepsis.baselines         # 4. SIRS rule + logistic regression on the same folds
 python -m sepsis.replica           # 5. original leaky pipeline for comparison
 python -m sepsis.analysis          # 6. bootstrap CI, SHAP, calibration, figures 6-13, results/summary.json
+python -m sepsis.timing            # 6b. why timing fails (5 experiments, ~8 min)
 python -m sepsis.final             # 7. final model + monitoring reference -> models/
 uvicorn api.app:app --port 8000    # 8. API, docs at http://localhost:8000/docs
 python -m sepsis.monitoring --log logs/predictions.csv   # 9. drift report (PSI) from logged requests
@@ -55,6 +56,6 @@ python -m sepsis.monitoring --log logs/predictions.csv   # 9. drift report (PSI)
 - Explainability: SHAP + gain importance.
 
 ## Roadmap
-Fix the timing problem (e.g. sequence models, different labels) → test Docker build → Streamlit demo → scheduled drift reports.
+Fix the timing problem (sequence model such as LSTM; five other ideas already failed, see CHANGELOG 0.4.0) → test Docker build → Streamlit demo → scheduled drift reports.
 
 Keep this README, `CHANGELOG.md`, `MODEL_CARD.md` and the report in sync after every code change (numbers come from `results/summary.json`).

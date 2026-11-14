@@ -1,0 +1,32 @@
+{
+ "E1_vitals_only": {
+  "timing_mean": 0.5364858685303057,
+  "timing_std": 0.012832051396389033,
+  "auroc_all_mean": 0.7041171616229913,
+  "n_features": 27
+ },
+ "E2_vitals_plus_dynamics": {
+  "timing_mean": 0.5281792816130213,
+  "timing_std": 0.021416271039085985,
+  "auroc_all_mean": 0.7421300527442014,
+  "n_features": 83
+ },
+ "E2b_all_plus_dynamics": {
+  "timing_mean": 0.5131008281234378,
+  "timing_std": 0.006493163495599091,
+  "auroc_all_mean": 0.8049181141636836,
+  "n_features": 144
+ },
+ "E3_case_only_all": {
+  "timing_mean": 0.5537240897474401,
+  "timing_std": 0.010216106282852747,
+  "auroc_all_mean": null,
+  "n_features": 144
+ },
+ "E3b_case_only_vitals": {
+  "timing_mean": 0.5421959459037856,
+  "timing_std": 0.009509634821275427,
+  "auroc_all_mean": null,
+  "n_features": 83
+ }
+}

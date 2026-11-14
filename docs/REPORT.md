@@ -10,7 +10,7 @@ In this project I tried to predict sepsis in ICU patients. The model looks at th
 
 At the start I already had a first version of the project. When I checked it again, I saw that its results were too good. The reason was data leakage. So I rebuilt the whole project the correct way.
 
-Now the model can find which patients are at higher risk. Its score is 0.80. For this score, 0.5 means guessing and 1.0 means perfect. But the model has two big problems. It gives too many false alarms, because about 6 out of 10 patients without sepsis get at least one alarm. And it cannot tell when sepsis will start. I measured this with a timing score, and it is 0.51, which is the same as guessing.
+Now the model can find which patients are at higher risk. Its score is 0.80. For this score, 0.5 means guessing and 1.0 means perfect. But the model has two big problems. It gives too many false alarms, because about 6 out of 10 patients without sepsis get at least one alarm. And it cannot tell when sepsis will start. I measured this with a timing score, and it is 0.51, which is the same as guessing. I tried five different ideas to fix it, and none of them worked well.
 
 I also could not repeat the numbers from my first report. When I ran my old code again on the same data, I got much worse numbers.
 
@@ -188,9 +188,25 @@ Fig 9 shows one typical patient. I took the median case and not the best one. Th
 
 Fig 9. A typical sepsis patient. The risk at the bottom stays flat before the start of sepsis, which is the red dotted line.
 
-I measured this with the timing score. It is 0.51 for the final model and between 0.50 and 0.52 for all other models. I tried trend inputs and I tried the benchmark target, and neither of them fixed it.
+I measured this with the timing score. It is 0.51 for the final model and between 0.50 and 0.52 for all other models.
 
-I have some ideas why this happens, but I did not test them. The label starts early, so the 6 hour window may be before the body shows clear changes. The model may mostly use the signals about which tests were ordered. And the hourly values may hide fast changes.
+After this I did a separate study to find out why the timing does not work. I tried five ideas and I measured each one with the same timing score.
+
+First, I checked if there is any signal at all. For every input I compared the last 6 hours before the start with the hours 7 to 48 before the start, but only inside the same patient. The vital signs change very little. Their scores are between 0.43 and 0.56, and 0.5 means no change. The strongest scores come from the counters of hours since the last measurement. But these counters are only a clock. They grow by 1 every hour without a new test, so they say nothing about the body.
+
+Second, I used only vital signs, age and gender, without labs and without the counters. I wanted to know if the model hides the real signal behind the information about which tests were ordered. The timing score was 0.536. This is a little better than 0.509, but it is still weak.
+
+Third, I added more time inputs. These were the difference from the average of the patient, the change in 1 and 3 hours, and the maximum, minimum and average over 12 and 24 hours. The timing score was 0.528 with vital signs only and 0.513 with all inputs. So this did not help.
+
+Fourth, I trained the model only on patients with sepsis. This way the model has to learn the timing and not the difference between patients. This was the best result, with a timing score of 0.554. With vital signs only it was 0.542.
+
+Fifth, I used the target from the benchmark. The timing score was 0.557.
+
+![Fig 14: timing score of all my attempts](figures/fig14_timing_attempts.png)
+
+Fig 14. All attempts stay between 0.51 and 0.56. The dashed line is 0.5, which means guessing.
+
+My conclusion is that with these inputs there is almost no signal that shows when sepsis is close. This is at least true for the 6 to 12 hours before the official time of sepsis. I cannot prove that the data really has no signal. The next thing that I did not try is a model that reads the whole sequence of one patient, for example an LSTM.
 
 # 9. Deployment and monitoring
 
@@ -210,6 +226,6 @@ The project now gives honest results, but the model is not an early warning syst
 
 I also want to compare what my first report said with what I found now. The first report said the recall rose from about 72% to about 93%. I could not repeat this, because the old code gave 9% and 55%. The first report said the model predicts sepsis 6 hours ahead. This is not true, because the model cannot tell when sepsis starts. The first report said the heart rate trend was a critical input. I never tested it then. Now the 6 hour average of the heart rate is in the top 10, but the lab and oxygen inputs are stronger. The first report said recall means lives saved. This is wrong, because recall is only the share of the sepsis hours that the model catches. The first report said sepsis is under 5% of the data. In the data it is 7.3% of the patients and 1.8% of the hours.
 
-What I want to do next. First, I want to find out why the timing does not work. I can try a different target, test the inputs about the hours since the last measurement, and try a model that reads the whole sequence. Second, I want to reduce the false alarms, for example by giving an alarm only when the risk keeps going up. Third, I want to build and test the Docker image and run the Colab notebook. Fourth, I want to add a small demo page and a regular drift report.
+What I want to do next. First, I want to try a model that reads the whole sequence of one patient, for example an LSTM, because the five ideas that I tried did not fix the timing. Second, I want to reduce the false alarms, for example by giving an alarm only when the risk keeps going up. Third, I want to build and test the Docker image and run the Colab notebook. Fourth, I want to add a small demo page and a regular drift report.
 
 For my CV I can write this. I built an end to end machine learning pipeline for the risk of sepsis in ICU patients, with 40,000 patients and 1.5 million hours, using LightGBM. It was better than the SIRS rule and logistic regression, with an AUROC of 0.80 against 0.63 and 0.73. I found and fixed data leakage in my earlier version with patient based validation, automatic tests and ablation tests, and I reported that the model ranks patients but does not find the time of the start (timing AUROC 0.51). I also added a tested FastAPI service and PSI drift monitoring.
