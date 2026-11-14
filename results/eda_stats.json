@@ -1,0 +1,14 @@
+{
+ "rows": 1552210,
+ "patients": 40336,
+ "positive_rows_pct": 1.798467990800214,
+ "septic_patients": 2932,
+ "septic_patients_pct": 7.268940896469656,
+ "median_icu_hours": 38.0,
+ "cols_over_80_missing": 27,
+ "onset_median_iculos": 29.0,
+ "onset_le_6h": 706,
+ "nonsepsis_stay_p99": 59.0,
+ "share_septic_if_stay_gt_60h": 0.8181818181818182,
+ "patients_stay_gt_60h": 1232
+}

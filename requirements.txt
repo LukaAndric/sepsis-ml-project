@@ -1,0 +1,13 @@
+# Tested with Python 3.11 (see CHANGELOG). Colab already ships pandas/scikit-learn/matplotlib;
+# the notebook only installs what is missing.
+numpy>=2.0
+pandas>=2.2
+pyarrow>=15
+scikit-learn>=1.4
+scipy>=1.11
+lightgbm>=4.3
+shap>=0.45
+matplotlib>=3.8
+seaborn>=0.13
+# dev / tests
+pytest>=8

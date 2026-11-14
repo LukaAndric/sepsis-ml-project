@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ipynb_checkpoints/
+# big / regenerable
+data/raw/*.csv
+results/*.parquet
+results/*.txt
+# keep small result tables and figures
+!results/*.csv
+!results/*.json

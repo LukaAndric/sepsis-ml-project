@@ -1,0 +1,11 @@
+.venv/
+data/
+results/
+figures/
+archive/
+docs/
+notebooks/
+tests/
+logs/
+.git/
+__pycache__/
