@@ -27,3 +27,7 @@
 
 ## 0.1.0 (2026-02) — original Colab notebook
 - RandomForest on 7 features, random row split, global ffill/shift. Kept in `archive/` for reference.
+
+## 0.3.1 (2026-11-14) - report rewrite
+- Report rewritten in simple first-person English, no tables, plain ASCII text (`docs/REPORT.md`).
+- `docs/build_report_docx.py` builds `docs/SepsisWatch_Report.docx` (page break before each section, 12 figures); uploaded to Google Drive as a Google Doc.
