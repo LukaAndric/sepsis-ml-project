@@ -1,5 +1,7 @@
 # SepsisWatch — leak-free sepsis risk model (research prototype)
 
+[![tests](https://github.com/LukaAndric/sepsis-ml-project/actions/workflows/tests.yml/badge.svg)](https://github.com/LukaAndric/sepsis-ml-project/actions/workflows/tests.yml) MIT license
+
 Predict, hour by hour, whether an ICU patient will develop sepsis in the next 6 hours
 (PhysioNet/CinC 2019 data). The project was rewritten after an audit found data leakage in the first version.
 
