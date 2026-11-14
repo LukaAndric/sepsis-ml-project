@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.0 (2026-11-14) - v1 closed
+- Reframed as a sepsis risk and detection model; final conclusion: early timing is a limit of the data and label.
+- Added `sepsis.alarms`: 4 h of silence after an alarm cuts false alarms by 76% with almost no loss of detection (fig17).
+- Report section 12 'Final conclusion'; title changed to 'Sepsis Risk and Detection Project Report'.
+- README: next project (MIMIC-IV). Package version 1.0.0. 22 tests.
+
 ## 0.5.0 (2026-11-14) - onset study
 - Added `sepsis.onset`: trajectories around clinical onset (fig15), partial SOFA/qSOFA features and rules,
   three targets (6-12 h before, 0-6 h before, detection) and an alarm on a rise of risk (fig16).

@@ -1,4 +1,4 @@
-# Sepsis Early Warning Project Report
+# Sepsis Risk and Detection Project Report
 
 Author: Luka Andric
 Date: 14 November 2026
@@ -14,7 +14,7 @@ Now the model can find which patients are at higher risk. Its score is 0.80. For
 
 I also could not repeat the numbers from my first report. When I ran my old code again on the same data, I got much worse numbers.
 
-In the next sections I explain sepsis, the data, my mistakes, the models I tried, the results and the problems I still have.
+At the end I call it a sepsis risk and detection model, because it can rank patients and detect sepsis when it starts, but it cannot warn early. In the next sections I explain sepsis, the data, my mistakes, the models I tried, the results, the problems I still have and my final conclusion.
 
 # 2. What is sepsis
 
@@ -337,3 +337,29 @@ Third, the model can detect sepsis at the moment it starts or just after. The ti
 Fourth, a big part of the onset comes from what the doctors do, like ordering tests, blood cultures and antibiotics. These actions are not in the data. So the label itself is hard to predict from vital signs.
 
 In the future, these things could help: data that is measured more often, for example every minute from the monitor, data about drug and culture orders, doctor notes, or a different label such as a SOFA rise alone. I did not try a sequence model.
+
+# 12. Final conclusion
+
+## What the model is for
+
+I started this project to build an early warning system for sepsis. After all my tests I think the honest name is a sepsis risk and detection model. The model can rank patients by risk, with an AUROC of 0.80. It can also detect sepsis at the moment it starts, with a timing score of 0.67 and an AUROC of 0.87. But it cannot warn 6 to 12 hours before the clinical onset.
+
+## Fewer false alarms
+
+For patients without sepsis the model gave about 7.7 false alarms per patient per day. The reason is that it raised an alarm in many hours one after the other. So I tried a simple fix without new data. After an alarm, the same patient gets no new alarm for some hours.
+
+With 4 hours of silence, the false alarms went down from 7.7 to 1.9 per patient per day, which is 76% less. The share of sepsis patients with an alarm in the 6 hour window went down only a little, from 86.8% to 85.8%. With 6 hours or more the false alarms go down even more, but many sepsis patients lose their alarm in the window. It is 74% with 6 hours and 41% with 12 hours. So 4 hours is the best choice.
+
+This fix does not change how many patients without sepsis get at least one alarm. That number stays at 59%. And still only about 2 of 100 alarms come in the 6 hour window before sepsis. So the fix makes the alarms less annoying, but it does not make them more correct.
+
+![Fig 17: false alarms and detected sepsis patients for different hours of silence](figures/fig17_alarm_suppression.png)
+
+Fig 17. Left: false alarms per patient per day. Right: sepsis patients that still get an alarm. Four hours of silence removes most repeated alarms and keeps almost all detections.
+
+## The limit of the data
+
+I think the main limit of this project is the data and the label, and not the model. I fixed the mistakes from my first version, I compared simple rules and models, and I tried many ideas for the timing. In the 6 to 12 hours before the clinical onset, the data shows almost no change, and every rule and model stays at a timing score of 0.50. A big part of the onset comes from the actions of the doctors, like blood cultures and antibiotics, and these are not in the data. Some parts of the SOFA score are missing too. So I think this is simply how this task looks with this kind of data, and it is important to show it honestly.
+
+## Next project
+
+To really study the timing, I need richer data. The MIMIC-IV database has antibiotics, blood cultures, drugs for blood pressure, the consciousness score and urine output, so the full sepsis definition can be built. Access is free, but it needs a PhysioNet account, an online course and a signed data use agreement. I want to try this in a second project.

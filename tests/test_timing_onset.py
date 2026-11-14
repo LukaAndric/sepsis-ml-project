@@ -101,3 +101,14 @@ def test_burden_reaches_target_recall():
     b = burden(score, pos, drop, meta, recall=0.8)
     assert b["nonsepsis_patients_with_alarm"] == pytest.approx(0.5)   # only n1 crosses the threshold
     assert b["alarms_per_100_nonsepsis_hours"] == pytest.approx(25.0)
+
+
+# ---------- sepsis.alarms ----------
+
+def test_suppress_silences_repeats_and_resets_per_patient():
+    from sepsis.alarms import suppress
+    alarm = np.array([1, 1, 1, 1, 1, 0, 1, 1, 1], bool)
+    patient = np.array([0, 0, 0, 0, 0, 0, 0, 1, 1])
+    assert suppress(alarm, patient, 0).tolist() == alarm.tolist()            # no silence: every alarm fires
+    assert suppress(alarm, patient, 2).astype(int).tolist() == [1, 0, 0, 1, 0, 0, 1, 1, 0]
+    # patient 1 starts fresh at row 7 even though patient 0 had an alarm at row 6

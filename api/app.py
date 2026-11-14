@@ -51,7 +51,7 @@ class PredictResponse(BaseModel):
     disclaimer: str
 
 
-app = FastAPI(title="SepsisWatch API", version="0.2.0")
+app = FastAPI(title="SepsisWatch API", version="1.0.0")
 _state = {}
 
 

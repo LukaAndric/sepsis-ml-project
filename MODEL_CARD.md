@@ -1,4 +1,4 @@
-# Model card — SepsisWatch (research prototype)
+# Model card — SepsisWatch v1.0: sepsis risk and detection (research prototype)
 
 **Not for clinical use.** Educational / portfolio project on retrospective public data.
 
@@ -54,6 +54,11 @@ Benchmark-style task (label of the current hour): AUROC 0.821 ± 0.005, AUPRC 0.
 6. Single retrospective dataset, no external validation, no fairness analysis, evaluated by cross-validation on the
    training data (not on the challenge's hidden test set), so numbers are not directly comparable to the challenge leaderboard.
 7. The original project report (recall 72% → 93%) could not be reproduced with the provided data (`results/replica_original.json`).
+
+## Intended use (v1.0)
+Ranking ICU patients by sepsis risk and detecting sepsis at onset (research only). NOT an early-warning system:
+there is no timing signal 6-12 h before clinical onset in this data. Recommended alarm policy: 4 h of silence after an alarm
+(false alarms 7.7 -> 1.9 per non-septic patient-day; in-window detection 86.8% -> 85.8%; 59% of non-septic patients still get >=1 alarm).
 
 ## Serving and monitoring
 `api/app.py` (FastAPI) returns risk, alarm and threshold for one patient's hourly history and logs every request.
