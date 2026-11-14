@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.0 (2026-11-14) - onset study
+- Added `sepsis.onset`: trajectories around clinical onset (fig15), partial SOFA/qSOFA features and rules,
+  three targets (6-12 h before, 0-6 h before, detection) and an alarm on a rise of risk (fig16).
+- Result: no signal 6-12 h before (timing 0.50), weak 0-6 h before (0.54-0.56), detection works (0.67, AUROC 0.87).
+- Report section 11 added (simple English); Google Doc updated.
+
 ## 0.4.0 (2026-11-14) - timing study
 - Added `sepsis.timing`: within-patient univariate check and 5 experiments on why the model cannot tell WHEN sepsis starts.
 - Result: timing AUROC 0.51-0.56 for every variant (best: trained on septic patients only, 0.554). New figure 14.

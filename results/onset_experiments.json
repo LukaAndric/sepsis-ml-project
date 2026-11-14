@@ -1,0 +1,147 @@
+{
+ "targets": {
+  "A: 6-12 h before": {
+   "positive_hours": 14079,
+   "rule_qsofa_timing": 0.5140045416106352,
+   "rule_sofa_rise24_timing": 0.5033134943767567,
+   "rule_sofa_timing": 0.4769458846676277,
+   "lgbm_base": {
+    "auroc": 0.7931642729471512,
+    "auroc_sd": 0.009340257466250975,
+    "timing": 0.495943131675835,
+    "timing_sd": 0.00661359028492624
+   },
+   "lgbm_sofa": {
+    "auroc": 0.7952280487639032,
+    "auroc_sd": 0.009453947066432227,
+    "timing": 0.4971924024034224,
+    "timing_sd": 0.008143600743128882
+   },
+   "alarm_on_level": {
+    "alarms_per_100_nonsepsis_hours": 32.95803739672416,
+    "nonsepsis_patients_with_alarm": 0.9400064164260507,
+    "precision": 0.019799804515825078
+   },
+   "alarm_on_rise": {
+    "alarms_per_100_nonsepsis_hours": 100.0,
+    "nonsepsis_patients_with_alarm": 1.0,
+    "precision": 0.00923640714980181
+   },
+   "rise_score_timing": 0.49945126335308576
+  },
+  "B: 0-6 h before": {
+   "positive_hours": 17551,
+   "rule_qsofa_timing": 0.5213586960309412,
+   "rule_sofa_rise24_timing": 0.5358764003013999,
+   "rule_sofa_timing": 0.46996688465472514,
+   "lgbm_base": {
+    "auroc": 0.8085753345166381,
+    "auroc_sd": 0.0060987468478111585,
+    "timing": 0.5408543391324048,
+    "timing_sd": 0.015476739214003528
+   },
+   "lgbm_sofa": {
+    "auroc": 0.8110869957414861,
+    "auroc_sd": 0.00576424712676229,
+    "timing": 0.5407358585718336,
+    "timing_sd": 0.01039587718336238
+   },
+   "alarm_on_level": {
+    "alarms_per_100_nonsepsis_hours": 29.381359617335846,
+    "nonsepsis_patients_with_alarm": 0.9348732755854989,
+    "precision": 0.02666983237570635
+   },
+   "alarm_on_rise": {
+    "alarms_per_100_nonsepsis_hours": 100.0,
+    "nonsepsis_patients_with_alarm": 1.0,
+    "precision": 0.011383115682834526
+   },
+   "rise_score_timing": 0.5577979734404651
+  },
+  "C: 0-6 h after (detection)": {
+   "positive_hours": 10365,
+   "rule_qsofa_timing": 0.5443824324256401,
+   "rule_sofa_rise24_timing": 0.6283356937671158,
+   "rule_sofa_timing": 0.5649400523312204,
+   "lgbm_base": {
+    "auroc": 0.8700646852865738,
+    "auroc_sd": 0.004782311118525148,
+    "timing": 0.6621787879255912,
+    "timing_sd": 0.010401732210241979
+   },
+   "lgbm_sofa": {
+    "auroc": 0.8718482011977287,
+    "auroc_sd": 0.004572449406740496,
+    "timing": 0.6679928061932773,
+    "timing_sd": 0.014525258101745228
+   },
+   "alarm_on_level": {
+    "alarms_per_100_nonsepsis_hours": 17.774749963762865,
+    "nonsepsis_patients_with_alarm": 0.5068441877874024,
+    "precision": 0.023770959409911446
+   },
+   "alarm_on_rise": {
+    "alarms_per_100_nonsepsis_hours": 36.37954776054501,
+    "nonsepsis_patients_with_alarm": 0.9284568495348091,
+    "precision": 0.013594467779537473
+   },
+   "rise_score_timing": 0.6687786300006001
+  }
+ },
+ "trajectories": {
+  "HR": {
+   "sepsis_-24h": 88.18856304985337,
+   "sepsis_-6h": 89.90461297888976,
+   "sepsis_0h": 91.20884773662551,
+   "sepsis_+12h": NaN
+  },
+  "Resp": {
+   "sepsis_-24h": 19.786708111308467,
+   "sepsis_-6h": 20.13224852071006,
+   "sepsis_0h": 20.309310344827587,
+   "sepsis_+12h": NaN
+  },
+  "Temp": {
+   "sepsis_-24h": 37.04670508856912,
+   "sepsis_-6h": 37.08089294370515,
+   "sepsis_0h": 37.18680627899436,
+   "sepsis_+12h": NaN
+  },
+  "MAP": {
+   "sepsis_-24h": 81.46603874421456,
+   "sepsis_-6h": 81.44102703529636,
+   "sepsis_0h": 79.97380316568173,
+   "sepsis_+12h": NaN
+  },
+  "Lactate (ffill)": {
+   "sepsis_-24h": 1.7616868672045793,
+   "sepsis_-6h": 1.8758887256027301,
+   "sepsis_0h": 1.964434779588727,
+   "sepsis_+12h": NaN
+  },
+  "WBC (ffill)": {
+   "sepsis_-24h": 12.44120744333944,
+   "sepsis_-6h": 12.646283183706656,
+   "sepsis_0h": 13.041846930547205,
+   "sepsis_+12h": NaN
+  },
+  "Partial SOFA": {
+   "sepsis_-24h": 3.4927452118398143,
+   "sepsis_-6h": 2.818894952251023,
+   "sepsis_0h": 3.6606102159753173,
+   "sepsis_+12h": NaN
+  },
+  "SOFA rise vs 24 h min": {
+   "sepsis_-24h": 1.1729541497388276,
+   "sepsis_-6h": 1.0306957708049114,
+   "sepsis_0h": 1.7559136098731574,
+   "sepsis_+12h": NaN
+  },
+  "Share of hours with a new lab test": {
+   "sepsis_-24h": 0.16424840394660475,
+   "sepsis_-6h": 0.15177353342428376,
+   "sepsis_0h": 0.26191292423723,
+   "sepsis_+12h": NaN
+  }
+ }
+}

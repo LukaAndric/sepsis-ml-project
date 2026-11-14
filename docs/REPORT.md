@@ -275,3 +275,65 @@ What I want to do next. First, I want to try a model that reads the whole sequen
 ## For my CV
 
 For my CV I can write this. I built an end to end machine learning pipeline for the risk of sepsis in ICU patients, with 40,000 patients and 1.5 million hours, using LightGBM. It was better than the SIRS rule and logistic regression, with an AUROC of 0.80 against 0.63 and 0.73. I found and fixed data leakage in my earlier version with patient based validation, automatic tests and ablation tests, and I reported that the model ranks patients but does not find the time of the start (timing AUROC 0.51). I also added a tested FastAPI service and PSI drift monitoring.
+
+# 11. Extra analysis: can the model learn when sepsis starts?
+
+The biggest problem of my model is the timing. So I did one more study. I wanted to know two things. Does the data show any change before sepsis at all? And can a model catch the right moment if the target is closer to the moment of sepsis?
+
+## The clinical onset
+
+In this data, the official time of sepsis comes from the Sepsis-3 definition. It needs two things. The doctors suspect an infection, which means they order a blood culture and give antibiotics. And the SOFA organ score goes up by 2 or more. The label in the data starts 6 hours before this official time. In this section I count all hours from the official time, and I call it the clinical onset.
+
+There are some limits. The records stop at most 3 hours after the clinical onset. Blood cultures and antibiotics are not in the data. Some parts of the SOFA score are also missing, for example consciousness, urine and drugs for blood pressure. So I could only build a partial SOFA score.
+
+## What changes around the onset
+
+I drew the average of some values for sepsis patients, from 48 hours before to 3 hours after the clinical onset. For comparison I drew patients without sepsis around a random hour (Fig 15).
+
+![Fig 15: average values around the clinical onset, sepsis patients and controls](figures/fig15_onset_trajectories.png)
+
+Fig 15. Red is sepsis patients and grey is patients without sepsis. The dotted line is the clinical onset. The shaded part is 6 to 12 hours before, which is my current target.
+
+Heart rate goes up slowly. It is about 88 one day before, 89.9 six hours before and 91.2 at the onset. Breathing rate goes up from 19.8 to 20.3 in the last day. Temperature goes up mostly in the last 6 hours, from 37.08 to 37.19 degrees. Blood pressure (MAP) falls only at the onset, from about 81 to about 78. Lactate starts to rise about 12 hours before, from 1.76 to 1.96. White blood cells rise slowly over two days, from 12.4 one day before to 13.0 at the onset.
+
+The rise of the SOFA score compared with its lowest value in the last 24 hours stays flat at about 1.1. It starts to go up only in the last 6 hours, to about 1.8 at the onset and 2.0 just after. This makes sense, because a SOFA rise of 2 is part of the definition of sepsis.
+
+The share of hours with a new lab test jumps from about 15% to about 26% at the onset, with a peak of 30%. This shows that the doctors do more tests exactly at that moment.
+
+There is a small dip in the partial SOFA exactly 6 hours before the onset. I think this is not real. Patients whose label starts in their first ICU hour begin their records at this point, and they have no lab values yet, so their SOFA is counted as 0.
+
+So the changes are real but small, and most of them happen in the last 6 hours before the onset. In the 6 to 12 hours before, which is my current target, almost nothing changes. Also, these are averages. Single patients look very different from each other, so it is still hard to tell the hours apart.
+
+## Three targets
+
+I compared three targets. Target A means sepsis starts in 6 to 12 hours, which is my current target. Target B means it starts in 0 to 6 hours. Target C means the first hours after the onset, so this is detection and not warning. Target C only covers up to 3 hours after, because the records stop there.
+
+For each target I measured the timing score with two simple rules and two models. The timing score compares the target hours with the hours 12 to 48 before the onset, only for sepsis patients. The first rule is qSOFA, which counts a breathing rate of 22 or more and a systolic pressure of 100 or lower. The third part of qSOFA is confusion, but it is not in the data. The second rule is the rise of the partial SOFA score. The models are LightGBM with my 88 inputs, and LightGBM with 15 extra SOFA inputs.
+
+For target A, all four are at 0.50 or 0.51. qSOFA got 0.51, the SOFA rise 0.50, LightGBM 0.50 and LightGBM with SOFA also 0.50.
+
+For target B, qSOFA got 0.52, the SOFA rise 0.54, LightGBM 0.54 and LightGBM with SOFA 0.54.
+
+For target C, qSOFA got 0.54, the SOFA rise 0.63, LightGBM 0.66 and LightGBM with SOFA 0.67. For this target the normal AUROC over all hours was 0.87.
+
+![Fig 16: timing score for the three targets](figures/fig16_onset_targets.png)
+
+Fig 16. Timing score of the rules and models for each target. The dotted red line is my success line of 0.65.
+
+My success line was a timing score of 0.65. Only detection reached it. The SOFA inputs added almost nothing, at most 0.006.
+
+## Alarm on a rise of risk
+
+I also tried an alarm that starts when the risk goes up compared with its lowest value in the last 6 hours, and not when the risk is just high. The timing score of this rise was 0.50 for target A, 0.56 for target B and 0.67 for target C. This is a little better than the normal risk score. But it did not reduce false alarms. To catch 80% of the target hours, the rise alarm had to fire in almost every hour for targets A and B. For target C it gave about twice as many alarms as the normal alarm, 36 against 18 per 100 normal hours. I chose the threshold the same way for both alarms, on all results together.
+
+## What this means
+
+First, with this data I cannot predict sepsis 6 to 12 hours before the clinical onset. The data shows almost no change in that time.
+
+Second, close to the onset, in the last 6 hours, there is a weak signal. The best timing score was 0.56. This is not enough for a useful alarm.
+
+Third, the model can detect sepsis at the moment it starts or just after. The timing score is 0.67 and the AUROC is 0.87. This is not an early warning, but it could help so that sepsis is not missed.
+
+Fourth, a big part of the onset comes from what the doctors do, like ordering tests, blood cultures and antibiotics. These actions are not in the data. So the label itself is hard to predict from vital signs.
+
+In the future, these things could help: data that is measured more often, for example every minute from the monitor, data about drug and culture orders, doctor notes, or a different label such as a SOFA rise alone. I did not try a sequence model.

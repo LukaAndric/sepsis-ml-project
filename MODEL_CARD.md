@@ -43,6 +43,9 @@ Benchmark-style task (label of the current hour): AUROC 0.821 ± 0.005, AUPRC 0.
    Trend features did not fix this (+0.004 AUROC only). Five further attempts (vitals only, extra dynamics, training on septic
    patients only, benchmark target; `python -m sepsis.timing`) reached 0.51-0.56 at best (`figures/fig14_timing_attempts.png`).
    Within-patient, vital signs hardly change in the 48 h before onset (univariate AUC 0.43-0.56).
+   Onset study (`python -m sepsis.onset`, fig15-16): relative to the CLINICAL onset (label start + 6 h), timing AUROC is
+   0.50 for 6-12 h before, 0.54 for 0-6 h before and 0.67 for detection (0-3 h after; AUROC 0.87). Partial SOFA / qSOFA
+   features and rules did not help; an alarm on a rise of risk did not reduce false alarms. Records end 3 h after onset.
 2. **Alarm burden is unusable clinically:** 59% of non-septic patients would trigger an alarm; precision 1.9%.
 3. **Calibration is acceptable but skill is low:** deciles follow the diagonal (Fig 13), but Brier is only 1.6% better than no skill.
 4. **Clinician-behaviour features:** top SHAP features include `FiO2_hrs_since`, Lactate and other `*_hrs_since` features

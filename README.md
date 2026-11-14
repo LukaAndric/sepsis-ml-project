@@ -13,7 +13,7 @@ Full report (simple English, one section per page): https://docs.google.com/docu
 
 ## Layout
 ```
-src/sepsis/    config  features  train  baselines  final  metrics  analysis  eda  replica  monitoring  timing
+src/sepsis/    config  features  train  baselines  final  metrics  analysis  eda  replica  monitoring  timing  onset
 api/           app.py               FastAPI service (POST /predict, GET /health)
 models/        lgbm_final.txt, model_meta.json, reference_stats.json (created by sepsis.final)
 tests/         leakage + API + monitoring tests (13)
@@ -37,6 +37,7 @@ python -m sepsis.baselines         # 4. SIRS rule + logistic regression on the s
 python -m sepsis.replica           # 5. original leaky pipeline for comparison
 python -m sepsis.analysis          # 6. bootstrap CI, SHAP, calibration, figures 6-13, results/summary.json
 python -m sepsis.timing            # 6b. why timing fails (5 experiments, ~8 min)
+python -m sepsis.onset             # 6c. what changes around onset, 3 targets, SOFA rules (~25 min)
 python -m sepsis.final             # 7. final model + monitoring reference -> models/
 uvicorn api.app:app --port 8000    # 8. API, docs at http://localhost:8000/docs
 python -m sepsis.monitoring --log logs/predictions.csv   # 9. drift report (PSI) from logged requests
@@ -58,6 +59,6 @@ python -m sepsis.monitoring --log logs/predictions.csv   # 9. drift report (PSI)
 - Explainability: SHAP + gain importance.
 
 ## Roadmap
-Fix the timing problem (sequence model such as LSTM; five other ideas already failed, see CHANGELOG 0.4.0) → test Docker build → Streamlit demo → scheduled drift reports.
+Timing: 6-12 h ahead is not predictable with this data (CHANGELOG 0.4.0, 0.5.0); detection at onset works (timing AUROC 0.67) → test Docker build → Streamlit demo → scheduled drift reports.
 
 Keep this README, `CHANGELOG.md`, `MODEL_CARD.md` and the report in sync after every code change (numbers come from `results/summary.json`).
